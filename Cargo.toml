@@ -1,0 +1,18 @@
+[package]
+name = "nos"
+authors = ["haruki7049 <tontonkirikiri@gmail.com>"]
+version = "0.1.0"
+description = "My Nostr CLI client"
+edition = "2024"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/haruki7049/zxcv"
+
+[dependencies]
+clap = { version = "4.5.40", features = ["derive"] }
+color-eyre = { version = "0.6.5", features = ["issue-url"] }
+confy = "1.0.0"
+nostr-sdk = "0.42.0"
+serde = { version = "1.0.219", features = ["derive"] }
+tokio = { version = "1.45.1", features = ["full"] }
+url = { version = "2.5.4", features = ["serde"] }
