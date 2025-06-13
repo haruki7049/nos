@@ -17,6 +17,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client: Client = setup_client(&config).await?;
 
     send(client, &args, &config).await?;
+    println!("Sent your message to Nostr relays: \"{}\"", &args.message);
 
     Ok(())
 }
