@@ -16,5 +16,5 @@ Configuration format is the following:
 relays = ["wss://yabu.me"]
 
 # Your seckey
-seckey = "nsec1q0zg3re3ud0je0fly5kr3akasm9e8mh0xcyqlz7fwh59rs85u3tq48fenu"
+seckey = "nsecAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 ```
