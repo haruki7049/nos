@@ -10,6 +10,7 @@ Sent your message to Nostr relays: "Hello, Nostr!!"
 This program uses the rust crate [confy](https://github.com/rust-cli/confy). You must write your config file on `~/.config/nos/config.toml` for Linux, or on `~/Library/Application Support/nos/config.toml` on macOS.
 
 Configuration format is the following:
+
 ```toml
 # relay list
 relays = ["wss://yabu.me"]

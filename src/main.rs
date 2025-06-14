@@ -1,8 +1,8 @@
 use clap::Parser;
-use url::Url;
-use serde::{Serialize, Deserialize};
+use nostr_sdk::{Client, Event, EventBuilder, Keys, Kind, SecretKey};
+use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use nostr_sdk::{Event, EventBuilder, Kind, Keys, Client, SecretKey};
+use url::Url;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -22,12 +22,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-async fn send(client: Client, args: &CLIArgs, nosconfig: &NosConfig) -> Result<(), Box<dyn std::error::Error>> {
+async fn send(
+    client: Client,
+    args: &CLIArgs,
+    nosconfig: &NosConfig,
+) -> Result<(), Box<dyn std::error::Error>> {
     let seckey = SecretKey::parse(&nosconfig.seckey)?;
     let keys = Keys::new(seckey);
 
-    let event: Event = EventBuilder::new(Kind::TextNote, &args.message)
-        .sign_with_keys(&keys)?;
+    let event: Event = EventBuilder::new(Kind::TextNote, &args.message).sign_with_keys(&keys)?;
 
     client.send_event(&event).await?;
 
