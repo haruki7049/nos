@@ -2,7 +2,7 @@ use clap::Parser;
 use url::Url;
 use serde::{Serialize, Deserialize};
 use std::path::PathBuf;
-use nostr_sdk::{Event, EventBuilder, Kind, Timestamp, Keys, Client, Filter, PublicKey, SecretKey};
+use nostr_sdk::{Event, EventBuilder, Kind, Keys, Client, SecretKey};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -23,12 +23,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 async fn send(client: Client, args: &CLIArgs, nosconfig: &NosConfig) -> Result<(), Box<dyn std::error::Error>> {
-    let pubkey = PublicKey::parse(&nosconfig.pubkey)?;
     let seckey = SecretKey::parse(&nosconfig.seckey)?;
     let keys = Keys::new(seckey);
 
     let event: Event = EventBuilder::new(Kind::TextNote, &args.message)
-        .build(pubkey)
         .sign_with_keys(&keys)?;
 
     client.send_event(&event).await?;
@@ -48,11 +46,6 @@ async fn setup_client(nosconfig: &NosConfig) -> Result<Client, Box<dyn std::erro
         client.add_relay(url).await?;
     }
 
-    let subscription = Filter::new()
-        .since(Timestamp::now());
-
-    client.subscribe(subscription, None).await?;
-
     client.connect().await;
 
     Ok(client)
@@ -61,7 +54,6 @@ async fn setup_client(nosconfig: &NosConfig) -> Result<Client, Box<dyn std::erro
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 struct NosConfig {
     relays: Vec<Url>,
-    pubkey: String,
     seckey: String,
 }
 
