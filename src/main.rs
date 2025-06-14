@@ -1,5 +1,5 @@
 use clap::Parser;
-use nostr_sdk::{Client, Event, EventBuilder, Keys, Kind, SecretKey};
+use nostr_sdk::{Client, Event, EventBuilder, Keys, Kind, SecretKey, ToBech32};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use url::Url;
@@ -14,23 +14,40 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         None => confy::load("nos", "config")?,
     };
 
-    let client: Client = setup_client(&config).await?;
+    if args.generate_key {
+        generate_key()?;
+        return Ok(());
+    }
 
-    send(client, &args, &config).await?;
-    println!("Sent your message to Nostr relays: \"{}\"", &args.message);
+    let client: Client = setup_client(&config).await?;
+    let message = &args.message.expect("No message. Enter your message");
+
+    send(client, message, &config).await?;
+    println!("Sent your message to Nostr relays: \"{}\"", message);
+
+    Ok(())
+}
+
+fn generate_key() -> Result<(), Box<dyn std::error::Error>> {
+    // Generate new random keys
+    let keys = Keys::generate();
+    let pubkey = keys.public_key();
+    let seckey = keys.secret_key();
+    println!("Your public key: {}", pubkey.to_bech32()?);
+    println!("Your secret key: {}", seckey.to_bech32()?);
 
     Ok(())
 }
 
 async fn send(
     client: Client,
-    args: &CLIArgs,
+    message: &String,
     nosconfig: &NosConfig,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let seckey = SecretKey::parse(&nosconfig.seckey)?;
     let keys = Keys::new(seckey);
 
-    let event: Event = EventBuilder::new(Kind::TextNote, &args.message).sign_with_keys(&keys)?;
+    let event: Event = EventBuilder::new(Kind::TextNote, message).sign_with_keys(&keys)?;
 
     client.send_event(&event).await?;
 
@@ -65,5 +82,9 @@ struct CLIArgs {
     #[arg(short, long)]
     config: Option<PathBuf>,
 
-    message: String,
+    #[arg(long, default_value_t = false)]
+    generate_key: bool,
+
+    #[arg(short, long)]
+    message: Option<String>,
 }
