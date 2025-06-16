@@ -3,7 +3,7 @@
 A Nostr CLI client which can post text note to nostr network only
 
 ```sh
-nos "Hello, Nostr!!"
+$ nos -m "Hello, Nostr!!"
 Sent your message to Nostr relays: "Hello, Nostr!!"
 ```
 
